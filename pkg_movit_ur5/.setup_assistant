@@ -1,0 +1,11 @@
+moveit_setup_assistant_config:
+  URDF:
+    package: models_pkgs
+    relative_path: urdf/ur5.urdf
+    xacro_args: ""
+  SRDF:
+    relative_path: config/ur5.srdf
+  CONFIG:
+    author_name: Utkarsh
+    author_email: ujakate@gmail.com
+    generated_timestamp: 1619289552

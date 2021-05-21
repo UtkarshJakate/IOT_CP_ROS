@@ -1,0 +1,49 @@
+<launch>
+    <env name="GAZEBO_MODEL_PATH" value="$(find models_pkgs)/models"/>
+    
+    <!-- Arguments -->
+    <arg name="paused" default="false"/>
+    <arg name="use_sim_time" default="true"/>
+    <arg name="gui" default="true"/>
+    <arg name="rviz" default = "false"/>
+    <arg name="headless" default="false"/>
+    <arg name="debug" default="false"/>
+    <arg name="extra_gazebo_args" default="--verbose"/>
+
+    <!-- Gazebo with World File -->
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+        <arg name="world_name" value="$(find models_pkgs)/worlds/ur5.world"/>
+        <arg name="debug" value="$(arg debug)" />
+        <arg name="gui" value="$(arg gui)" />
+        <arg name="paused" value="$(arg paused)"/>
+        <arg name="use_sim_time" value="$(arg use_sim_time)"/>
+        <arg name="headless" value="$(arg headless)"/>
+        <arg name="extra_gazebo_args" value="$(arg extra_gazebo_args)"/>
+    </include>
+
+    <include file = "$(find models_pkgs)/launch/spawn_ur5.launch" >
+        <arg name="arg_x" value="0.00" />
+        <arg name="arg_y" value="0.80" />
+        <arg name="arg_z" value="0.090092" />
+        <arg name="arg_R" value="0.0" />
+        <arg name="arg_P" value="0.0" />
+        <arg name="arg_Y" value="0.0" />
+    </include>
+    
+    
+
+    <include file = "$(find pkg_movit_ur5)/launch/move_group.launch" />  -->
+
+	<arg name="use_rviz" default="true" /> -->
+	<include file="$(find pkg_movit_ur5)/launch/moveit_rviz.launch" if="$(arg use_rviz)">
+		<arg name="rviz_config" value="$(find pkg_movit_ur5)/launch/moveit.rviz"/>
+	</include>
+
+    <arg name="scene_file" value="$(find pkg_movit_ur5)/config/rviz/iot_scene.scene"/> 
+    <node name = "moveit_publish_scene_from_text" pkg= "moveit_ros_planning" type = "moveit_publish_scene_from_text" args= "$(arg scene_file)"/>
+
+    <node name= "node_service_server_vacuum_gripper_ur5" pkg="models_pkgs" type="node_service_server_vacuum_gripper.py" output="screen"/>
+    <!-- Spawn Boxes -->
+    <node name= "spawn_models" pkg= "models_pkgs" type="spawn_models.py"/> 
+
+</launch>
